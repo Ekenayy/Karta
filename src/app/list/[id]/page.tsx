@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-
+import { FaExpand } from "react-icons/fa";
 
 type Flashcard = { front: string; back: string };
 type List = {
@@ -78,9 +78,15 @@ export default function ListShowPage() {
             <div className="flip-card-inner">
               <div className="flip-card-front">
                 {card.front}
+                <button className="expand-card absolute bottom-3 right-3">
+                  <FaExpand />
+                </button>
               </div>
               <div className="flip-card-back">
                 {card.back}
+                <button className="expand-card absolute bottom-3 right-3">
+                  <FaExpand />
+                </button>
               </div>
             </div>
           </div>
