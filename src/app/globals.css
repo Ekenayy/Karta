@@ -27,9 +27,17 @@ body {
 
 .flip-card {
   background-color: transparent;
+  perspective: 1000px;
+}
+
+.flip-card.large {
+  width: 350px;
+  height: 350px;
+}
+
+.flip-card.small{
   width: 250px;
   height: 200px;
-  perspective: 1000px;
 }
 
 .flip-card-inner {

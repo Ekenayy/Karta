@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -37,13 +37,112 @@ const mockLists: Record<string, List> = {
   },
 };
 
+function QuizModal({
+  open,
+  onClose,
+  cards,
+  startIndex = 0,
+}: {
+  open: boolean;
+  onClose: () => void;
+  cards: Flashcard[];
+  startIndex?: number;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+  const [revealed, setRevealed] = useState(false);
+  const [wrong, setWrong] = useState(0);
+  const [right, setRight] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
+  if (!open) return null;
+
+  const handleReveal = () => setRevealed(true);
+
+  const handleNext = () => {
+    setRevealed(false);
+    setCurrent((prev) => (prev + 1 < cards.length ? prev + 1 : prev));
+  };
+  const handlePrev = () => {
+    setRevealed(false);
+    setCurrent((prev) => (prev - 1 >= 0 ? prev - 1 : prev));
+  };
+
+  const handleSwipe = (dir: "left" | "right") => {
+    if (dir === "left") setWrong((w) => w + 1);
+    if (dir === "right") setRight((r) => r + 1);
+    handleNext();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    if (deltaX < -50) handleSwipe("left");
+    if (deltaX > 50) handleSwipe("right");
+    touchStartX.current = null;
+  };
+
+  const card = cards[current];
+
+  return (
+    <div className="fixed inset-0 z-50 bg-[#18183A] bg-opacity-95 flex flex-col">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-4 pt-6 pb-2">
+        <button onClick={onClose} className="text-white text-2xl">&times;</button>
+        <div className="text-lg font-semibold">{current + 1} / {cards.length}</div>
+        <button className="text-white"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M12 20v-6m0 0V4m0 10h6m-6 0H6" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg></button>
+      </div>
+      {/* Progress bar */}
+      <div className="w-full h-1 bg-[#23234A] mb-2">
+        <div className="h-1 bg-white" style={{ width: `${((current + 1) / cards.length) * 100}%` }} />
+      </div>
+      {/* Counters */}
+      <div className="flex justify-between items-center px-4 mb-2">
+        <div className="flex items-center">
+          <span className="bg-[#18183A] border-2 border-[#FF5A5F] text-[#FF5A5F] rounded-full px-3 py-1 font-bold text-lg">{wrong}</span>
+        </div>
+        <div className="flex items-center">
+          <span className="bg-[#18183A] border-2 border-[#00C48C] text-[#00C48C] rounded-full px-3 py-1 font-bold text-lg">{right}</span>
+        </div>
+      </div>
+      {/* Card */}
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div
+          className={`flip-card large w-[90vw] max-w-md h-[500px] mx-auto ${revealed ? "flipped" : ""}`}
+          onClick={() => setRevealed((r) => !r)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          style={{ cursor: "pointer" }}
+        >
+          <div className="flip-card-inner h-full">
+            <div className="flip-card-front w-[300px] flex flex-col items-center justify-center h-full">
+              {card.front}
+            </div>
+            <div className="flip-card-back w-[300px] flex flex-col items-center justify-center h-full">
+              {card.back}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Bottom controls */}
+      <div className="flex justify-between items-center px-8 py-4">
+        <button onClick={handlePrev} className="text-3xl text-white opacity-70"><svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+        <button onClick={handleNext} className="text-3xl text-white opacity-70"><svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+      </div>
+    </div>
+  );
+}
+
 export default function ListShowPage() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string;
   const list = mockLists[id] || mockLists["1"];
   const [flipped, setFlipped] = useState(Array(list.cards.length).fill(false));
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [quizOpen, setQuizOpen] = useState(false);
+  const [quizStartIndex, setQuizStartIndex] = useState(0);
 
   const handleFlip = (idx: number) => {
     setFlipped((prev) => {
@@ -53,8 +152,14 @@ export default function ListShowPage() {
     });
   };
 
+  const handleExpand = (idx: number) => {
+    setQuizStartIndex(idx);
+    setQuizOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-[#18183A] text-white flex flex-col">
+      <QuizModal open={quizOpen} onClose={() => setQuizOpen(false)} cards={list.cards} startIndex={quizStartIndex} />
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 pt-6 pb-2">
         <button onClick={() => router.push("/")} className="text-white">
@@ -72,19 +177,19 @@ export default function ListShowPage() {
         {list.cards.map((card, idx) => (
           <div
             key={idx}
-            className={`flip-card flex-shrink-0 cursor-pointer ${flipped[idx] ? "flipped" : ""}`}
+            className={`flip-card small flex-shrink-0 cursor-pointer ${flipped[idx] ? "flipped" : ""}`}
             onClick={() => handleFlip(idx)}
           >
             <div className="flip-card-inner">
-              <div className="flip-card-front">
+              <div className="flip-card-front relative flex flex-col items-center justify-center h-40 w-64">
                 {card.front}
-                <button className="expand-card absolute bottom-3 right-3">
+                <button className="expand-card absolute bottom-3 right-3" onClick={e => { e.stopPropagation(); handleExpand(idx); }}>
                   <FaExpand />
                 </button>
               </div>
-              <div className="flip-card-back">
+              <div className="flip-card-back relative flex flex-col items-center justify-center h-40 w-64">
                 {card.back}
-                <button className="expand-card absolute bottom-3 right-3">
+                <button className="expand-card absolute bottom-3 right-3" onClick={e => { e.stopPropagation(); handleExpand(idx); }}>
                   <FaExpand />
                 </button>
               </div>
@@ -95,7 +200,7 @@ export default function ListShowPage() {
       {/* Dots indicator */}
       <div className="flex justify-center space-x-1 mb-2">
         {list.cards.map((_, idx) => (
-          <span key={idx} className={`w-2 h-2 rounded-full ${idx === activeIndex ? 'bg-white' : 'bg-[#35356B]'}`}></span>
+          <span key={idx} className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-white' : 'bg-[#35356B]'}`}></span>
         ))}
       </div>
 
@@ -114,7 +219,7 @@ export default function ListShowPage() {
       {/* Action buttons (static) */}
       <div className="px-4 space-y-3 mt-2 mb-8">
         <div className="flex items-center bg-[#23234A] rounded-xl px-4 py-3 mb-1">
-          <span className="mr-3"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#4FC3F7" strokeWidth="2"/><path d="M8 10h8M8 14h5" stroke="#4FC3F7" strokeWidth="2" strokeLinecap="round"/></svg></span>
+          <span className="mr-3"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#4FC3F7" strokeWidth="2" strokeLinecap="round"/></svg></span>
           <span>Cartões</span>
         </div>
         <div className="flex items-center bg-[#23234A] rounded-xl px-4 py-3 mb-1">
@@ -136,4 +241,4 @@ export default function ListShowPage() {
       </div>
     </div>
   );
-} 
+}
