@@ -1,102 +1,94 @@
 import Image from "next/image";
 
+const flashcards = [
+  {
+    title: "Igbo Language",
+    terms: 30,
+    user: "ekenayy3",
+    avatar: "/icons/icon128.png",
+  },
+  {
+    title: "Portuguese Common Nouns",
+    terms: 31,
+    user: "ekenayy3",
+    avatar: "/icons/icon128.png",
+  },
+  {
+    title: "Verbs",
+    terms: 11,
+    user: "yuser",
+    avatar: "/icons/icon128.png",
+  },
+];
+
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen flex flex-col bg-[#18183A] text-white">
+      {/* Header */}
+      <header className="flex items-center justify-between px-4 pt-6 pb-4">
+        <div className="flex-1">
+          <input
+            type="text"
+            placeholder="Pesquisar"
+            className="w-full rounded-full bg-[#23234A] px-4 py-2 text-white placeholder-gray-400 focus:outline-none"
+          />
+        </div>
+        <div className="ml-4">
+          <Image
+            src="/icons/icon128.png"
+            alt="Profile"
+            width={40}
+            height={40}
+            className="rounded-full border-2 border-[#23234A]"
+          />
+        </div>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Lists Section */}
+      <main className="flex-1 px-4">
+        <h2 className="text-lg font-bold mb-2">Listas</h2>
+        <div className="flex space-x-4 overflow-x-auto pb-4">
+          {flashcards.map((card, idx) => (
+            <div
+              key={idx}
+              className="min-w-[250px] bg-[#23234A] rounded-2xl p-4 flex-shrink-0 shadow-md"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold text-base truncate">
+                  {card.title}
+                </span>
+                <span className="bg-[#23234A] text-xs px-2 py-1 rounded-full border border-[#35356B]">
+                  {card.terms} termos
+                </span>
+              </div>
+              <div className="flex items-center mt-4">
+                <Image
+                  src={card.avatar}
+                  alt={card.user}
+                  width={28}
+                  height={28}
+                  className="rounded-full border border-[#35356B]"
+                />
+                <span className="ml-2 text-sm text-gray-300">{card.user}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 w-full bg-[#23234A] flex justify-around items-center py-3 border-t border-[#35356B] z-10">
+        <button className="flex flex-col items-center text-white focus:outline-none">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M9 21V12h6v9" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <span className="text-xs mt-1">Página inicial</span>
+        </button>
+        <button className="flex items-center justify-center w-12 h-12 bg-[#18183A] rounded-full border-4 border-[#35356B] -mt-8 shadow-lg">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#fff" strokeWidth="2"/><path d="M12 8v8M8 12h8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
+        </button>
+        <button className="flex flex-col items-center text-white focus:outline-none">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#fff" strokeWidth="2"/><path d="M8 10h8M8 14h5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
+          <span className="text-xs mt-1">Sua biblioteca</span>
+        </button>
       </footer>
     </div>
   );
