@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+
 
 type Flashcard = { front: string; back: string };
 type List = {
@@ -37,6 +39,7 @@ const mockLists: Record<string, List> = {
 
 export default function ListShowPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params?.id as string;
   const list = mockLists[id] || mockLists["1"];
   const [flipped, setFlipped] = useState(Array(list.cards.length).fill(false));
@@ -54,7 +57,7 @@ export default function ListShowPage() {
     <div className="min-h-screen bg-[#18183A] text-white flex flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 pt-6 pb-2">
-        <button className="text-white">
+        <button onClick={() => router.push("/")} className="text-white">
           <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
         <button className="bg-yellow-400 text-[#18183A] font-semibold rounded-full px-4 py-1 text-sm">Avaliação gratuita</button>

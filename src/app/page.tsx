@@ -1,19 +1,25 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const flashcards = [
   {
+    id: "1",
     title: "Igbo Language",
     terms: 30,
     user: "ekenayy3",
     avatar: "/icons/icon128.png",
   },
   {
+    id: "2",
     title: "Portuguese Common Nouns",
     terms: 31,
     user: "ekenayy3",
     avatar: "/icons/icon128.png",
   },
   {
+    id: "3",
     title: "Verbs",
     terms: 11,
     user: "yuser",
@@ -22,6 +28,7 @@ const flashcards = [
 ];
 
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="min-h-screen flex flex-col bg-[#18183A] text-white">
       {/* Header */}
@@ -50,8 +57,9 @@ export default function Home() {
         <div className="flex space-x-4 overflow-x-auto pb-4">
           {flashcards.map((card, idx) => (
             <div
-              key={idx}
-              className="min-w-[250px] bg-[#23234A] rounded-2xl p-4 flex-shrink-0 shadow-md"
+              key={card.id}
+              onClick={() => router.push(`/list/${card.id}`)}
+              className="min-w-[250px] bg-[#23234A] rounded-2xl p-4 flex-shrink-0 shadow-md cursor-pointer hover:bg-[#35356B] transition-colors"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold text-base truncate">
