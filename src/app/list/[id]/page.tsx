@@ -72,14 +72,16 @@ export default function ListShowPage() {
         {list.cards.map((card, idx) => (
           <div
             key={idx}
-            className={`snap-center flex-shrink-0 w-64 h-40 rounded-2xl bg-[#35356B] flex items-center justify-center text-2xl font-semibold relative cursor-pointer transition-transform duration-300 ${flipped[idx] ? 'rotate-y-180' : ''}`}
-            style={{ perspective: 1000 }}
+            className={`flip-card flex-shrink-0 cursor-pointer ${flipped[idx] ? "flipped" : ""}`}
             onClick={() => handleFlip(idx)}
           >
-            <div className={`absolute w-full h-full flex items-center justify-center transition-transform duration-500 ${flipped[idx] ? 'rotate-y-180' : ''}`}
-              style={{ backfaceVisibility: 'hidden' }}
-            >
-              {flipped[idx] ? card.back : card.front}
+            <div className="flip-card-inner">
+              <div className="flip-card-front">
+                {card.front}
+              </div>
+              <div className="flip-card-back">
+                {card.back}
+              </div>
             </div>
           </div>
         ))}
@@ -114,11 +116,11 @@ export default function ListShowPage() {
           <span>Aprender</span>
         </div>
         <div className="flex items-center bg-[#23234A] rounded-xl px-4 py-3 mb-1">
-          <span className="mr-3"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#4FC3F7" strokeWidth="2"/><path d="M8 10h8M8 14h5" stroke="#4FC3F7" strokeWidth="2" strokeLinecap="round"/></svg></span>
+          <span className="mr-3"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#4FC3F7" strokeWidth="2" strokeLinecap="round"/></svg></span>
           <span>Avaliar</span>
         </div>
         <div className="flex items-center bg-[#23234A] rounded-xl px-4 py-3 mb-1">
-          <span className="mr-3"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#4FC3F7" strokeWidth="2"/><path d="M8 10h8M8 14h5" stroke="#4FC3F7" strokeWidth="2" strokeLinecap="round"/></svg></span>
+          <span className="mr-3"><svg width="28" height="28" fill="none" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2" stroke="#4FC3F7" strokeWidth="2" strokeLinecap="round"/></svg></span>
           <span>Combinar</span>
         </div>
         <div className="flex items-center bg-[#23234A] rounded-xl px-4 py-3 mb-1">
